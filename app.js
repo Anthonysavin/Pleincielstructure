@@ -15,7 +15,6 @@ const galleries = [
 let currentGallery = [];
 let currentIndex = 0;
 
-// Ouvrir lightbox
 document.querySelectorAll("[data-action='view']").forEach((btn, idx) => {
     btn.addEventListener("click", () => {
         currentGallery = galleries[idx];
@@ -56,18 +55,25 @@ document.addEventListener('DOMContentLoaded', () => {
     const slideElements = document.querySelectorAll('.slide');
     const prevBtn = document.querySelector('.nav-btn.prev');
     const nextBtn = document.querySelector('.nav-btn.next');
+    const slider = document.querySelector('.slider');
 
-    if (!slides || !prevBtn || !nextBtn) {
-        console.error('Erreur : éléments du slider introuvables.');
-        return;
-    }
+    if (!slides || !prevBtn || !nextBtn) return;
 
     let index = 0;
+
+    // Ajuste automatiquement la hauteur du slider
+    function updateHeight() {
+        const currentImg = slideElements[index].querySelector('img');
+        if (currentImg) {
+            slider.style.height = currentImg.clientHeight + 'px';
+        }
+    }
 
     function updateSlide() {
         const width = slideElements[0].clientWidth;
         slides.style.transform = `translateX(-${index * width}px)`;
         slides.style.transition = 'transform 0.5s ease-in-out';
+        setTimeout(updateHeight, 100);
     }
 
     nextBtn.addEventListener('click', () => {
@@ -84,4 +90,8 @@ document.addEventListener('DOMContentLoaded', () => {
         index = (index + 1) % slideElements.length;
         updateSlide();
     }, 5000);
+
+    window.addEventListener('resize', updateSlide);
+
+    updateSlide();
 });
